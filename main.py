@@ -3,10 +3,11 @@ from tkinter import *
 import tkintermapview
 from click import command
 
-users: list = []
+
+facilities = []
 
 
-class User:
+class Facility:
     def __init__(self, name, surname, location, post, map_widget):
         self.name = name
         self.surname = surname
@@ -27,17 +28,17 @@ class User:
                 float(response_html.select('.longitude')[1].text.replace(',', '.'))
             ]
 
-def add_users() -> None:
+def add_facilities() -> None:
     name = entry_imie.get()
     surname = entry_nazwisko.get()
     location = entry_miejscowosc.get()
     post = entry_post.get()
 
-    user = User(name=name, surname=surname, location=location, post=post, map_widget=map_widget)
-    users.append(user)
+    facility = Facility(name=name, surname=surname, location=location, post=post, map_widget=map_widget)
+    facilities.append(facility)
 
 
-    print(users)
+    print(facilities)
 
 
     entry_imie.delete(0, END)
@@ -46,52 +47,52 @@ def add_users() -> None:
     entry_post.delete(0, END)
 
     entry_imie.focus()
-    show_users()
+    show_facilities()
 
-def show_users() -> None:
+def show_facilities() -> None:
     listbox_lista_obiektow.delete(0, END)
-    for idx,user in enumerate(users):
-        listbox_lista_obiektow.insert(idx, f'{idx+1}. {user.name} {user.surname}')
+    for idx,user in enumerate(facilities):
+        listbox_lista_obiektow.insert(idx, f'{idx+1}. {facilities.name} {facilities.surname}')
 
-def remove_user() -> None:
+def remove_facility() -> None:
     i=listbox_lista_obiektow.index(ACTIVE)
-    users[i].marker.delete()
-    users.pop(i)
-    show_users()
+    facilities[i].marker.delete()
+    facilities.pop(i)
+    show_facilities()
 
 
-def edit_user():
+def edit_facility():
     i = listbox_lista_obiektow.index(ACTIVE)
-    name = users[i].name
-    surname = users[i].surname
-    location = users[i].location
-    post = users[i].post
+    name = facilities[i].name
+    surname = facilities[i].surname
+    location = facilities[i].location
+    post = facilities[i].post
 
     entry_imie.insert(0, name)
     entry_nazwisko.insert(0, surname)
     entry_miejscowosc.insert(0, location)
     entry_post.insert(0, post)
 
-    button_dodaj_obiekt.configure(text='Zapisz', command=lambda: update_user(i))
+    button_dodaj_obiekt.configure(text='Zapisz', command=lambda: update_facility(i))
 
-def update_user(i):
+def update_facility(i):
     name = entry_imie.get()
     surname = entry_nazwisko.get()
     location = entry_miejscowosc.get()
     post = entry_post.get()
 
-    users[i].name = name
-    users[i].surname = surname
-    users[i].location = location
-    users[i].post = post
+    facilities[i].name = name
+    facilities[i].surname = surname
+    facilities[i].location = location
+    facilities[i].post = post
 
-    users[i].cordinates = users[i].get_cordinates()
-    users[i].marker.delete()
-    users[i].marker = map_widget.set_marker(users[i].cordinates[0], users[i].cordinates[1], text=f'{users[i].name}')
+    facilities[i].cordinates = facilities[i].get_cordinates()
+    facilities[i].marker.delete()
+    facilities[i].marker = map_widget.set_marker(facilities[i].cordinates[0], facilities[i].cordinates[1], facilities=f'{facilities[i].name}')
 
-    show_users()
+    show_facilities()
 
-    button_dodaj_obiekt.config(text='Dodaj', command=add_users)
+    button_dodaj_obiekt.config(text='Dodaj', command=add_facilities)
 
     entry_imie.delete(0, END)
     entry_nazwisko.delete(0, END)
@@ -100,15 +101,15 @@ def update_user(i):
 
     entry_imie.focus()
 
-def show_user_details():
+def show_facility_details():
     i=listbox_lista_obiektow.index(ACTIVE)
-    label_szczegoly_obiektu_name_wartosc.config(text=users[i].name)
-    label_szczegoly_obiektu_surname_wartosc.config(text=users[i].surname)
-    label_szczegoly_obiektu_miejscowosc_wartosc.config(text=users[i].location)
-    label_szczegoly_obiektu_post_wartosc.config(text=users[i].post)
+    label_szczegoly_obiektu_name_wartosc.config(text=facilities[i].name)
+    label_szczegoly_obiektu_surname_wartosc.config(text=facilities[i].surname)
+    label_szczegoly_obiektu_miejscowosc_wartosc.config(text=facilities[i].location)
+    label_szczegoly_obiektu_post_wartosc.config(text=facilities[i].post)
 
     map_widget.set_zoom(15)
-    map_widget.set_position(users[i].cordinates[0], users[i].cordinates[1])
+    map_widget.set_position(facilities[i].cordinates[0], facilities[i].cordinates[1])
 
 root = Tk()
 root.geometry("1200x700")
@@ -133,15 +134,15 @@ listbox_lista_obiektow=Listbox(ramka_lista_obiektow, width=50, height=10)
 listbox_lista_obiektow.grid(row=1, column=0, columnspan=3)
 
 
-button_pokaz_szczegoly=Button(ramka_lista_obiektow, text='Pokaz szczegóły', command=show_user_details)
+button_pokaz_szczegoly=Button(ramka_lista_obiektow, text='Pokaz szczegóły', command=show_facility_details)
 button_pokaz_szczegoly.grid(row=2, column=0)
 
 
-button_usun_obiekt=Button(ramka_lista_obiektow, text='Usuń', command=remove_user)
+button_usun_obiekt=Button(ramka_lista_obiektow, text='Usuń', command=remove_facility)
 button_usun_obiekt.grid(row=2, column=1)
 
 
-button_edytuj_obiekt=Button(ramka_lista_obiektow, text='Edytuj', command=edit_user)
+button_edytuj_obiekt=Button(ramka_lista_obiektow, text='Edytuj', command=edit_facility)
 button_edytuj_obiekt.grid(row=2, column=2)
 
 # ramka_formularz
@@ -174,7 +175,7 @@ entry_post=Entry(ramka_formularz)
 entry_post.grid(row=4, column=1)
 
 
-button_dodaj_obiekt=Button(ramka_formularz, text='Dodaj', command=add_users)
+button_dodaj_obiekt=Button(ramka_formularz, text='Dodaj', command=add_facilities)
 button_dodaj_obiekt.grid(row=5, column=0, columnspan=2)
 
 # ramka_szczegoly_obiektow
