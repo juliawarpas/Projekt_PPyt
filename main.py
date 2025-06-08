@@ -9,11 +9,11 @@ employees = []
 clients = []
 
 class Facility:
-    def __init__(self, name, surname, location, post, map_widget):
+    def __init__(self, name, surname, location, id, map_widget):
         self.name = name
         self.surname = surname
         self.location = location
-        self.post = post
+        self.id = id
         self.cordinates = self.get_cordinates()
         self.marker = map_widget.set_marker(self.cordinates[0], self.cordinates[1], text=f'{self.name} {self.surname} {self.location}',marker_color_outside='red')
 
@@ -30,11 +30,11 @@ class Facility:
             ]
 
 class Employee:
-    def __init__(self, name, surname, location, post, map_widget):
+    def __init__(self, name, surname, location, id_placowki, map_widget):
         self.name = name
         self.surname = surname
         self.location = location
-        self.post = post
+        self.id_placowki = id_placowki
         self.cordinates = self.get_cordinates()
         self.marker = map_widget.set_marker(self.cordinates[0], self.cordinates[1], text=f'{self.name} {self.surname} {self.location}',marker_color_outside='blue')
 
@@ -51,11 +51,11 @@ class Employee:
             ]
 
 class Client:
-    def __init__(self, name, surname, location, post, map_widget):
+    def __init__(self, name, surname, location, id_placowki, map_widget):
         self.name = name
         self.surname = surname
         self.location = location
-        self.post = post
+        self.id_placowki = id_placowki
         self.cordinates = self.get_cordinates()
         self.marker = map_widget.set_marker(self.cordinates[0], self.cordinates[1], text=f'{self.name} {self.surname} {self.location}',marker_color_outside='green')
 
@@ -99,7 +99,7 @@ def add_object():
         print("Błąd dodawania:", e)
         return
 
-    # Wyczyść formularz
+    # Czyszczenie_formularz
     entry_imie.delete(0, END)
     entry_nazwisko.delete(0, END)
     entry_miejscowosc.delete(0, END)
@@ -266,6 +266,24 @@ def update_client(i):
 
     entry_imie.focus()
 
+def show_all_facilities():
+    map_widget.delete_all_marker()
+    for facility in facilities:
+        facility.marker = map_widget.set_marker(
+            facility.cordinates[0],
+            facility.cordinates[1],
+            text=f'{facility.name} {facility.surname} ({facility.location})'
+        )
+
+def show_all_employees():
+    map_widget.delete_all_marker()
+    for emp in employees:
+        emp.marker = map_widget.set_marker(
+            emp.cordinates[0],
+            emp.cordinates[1],
+            text=f'{emp.name} {emp.surname} ({emp.location})'
+        )
+
 
 #GUI
 root = Tk()
@@ -275,18 +293,17 @@ root.title('mapbook_jw')
 
 ramka_lista_placowek=Frame(root)
 ramka_formularz=Frame(root)
-ramka_szczegoly_obiektu=Frame(root)
 ramka_mapa=Frame(root)
 ramka_lista_pracownikow=Frame(root)
 ramka_lista_klientow=Frame(root)
+ramka_mapa_przyciski=Frame(root)
 
 ramka_lista_placowek.grid(row=0, column=0, sticky=N)
-ramka_formularz.grid(row=1, column=0,columnspan=3, sticky=N)
-ramka_szczegoly_obiektu.grid(row=2, column=0, columnspan=3)
+ramka_formularz.grid(row=1, column=1, sticky=N)
 ramka_mapa.grid(row=3, column=0, columnspan=3)
 ramka_lista_pracownikow.grid(row=0, column=1, sticky=N)
-ramka_formularz.grid(row=1, column=0, columnspan=3, sticky=N)
 ramka_lista_klientow.grid(row=0, column=2, sticky=N)
+ramka_mapa_przyciski.grid(row=1, column=0, sticky=NW)
 
 # ramka_lista_placowek
 label_lista_obiektow=Label(ramka_lista_placowek, text='Lista placówek:')
@@ -371,6 +388,18 @@ menu_typu.grid(row=4, column=1)
 button_dodaj_obiekt = Button(ramka_formularz, text="Dodaj", command=lambda: add_object())
 button_dodaj_obiekt.grid(row=5, column=0, columnspan=2, pady=10)
 
+#przyciski do map
+button_map_all_facilities = Button(ramka_mapa_przyciski, text="Mapa wszystkich placówek", command=show_all_facilities)
+button_map_all_facilities.grid(row=0, column=0, sticky=W, pady=5)
+
+button_map_all_employees = Button(ramka_mapa_przyciski, text="Mapa wszystkich pracowników", command=show_all_employees)
+button_map_all_employees.grid(row=1, column=0, sticky=W, pady=5)
+
+button_map_clients_of_facility = Button(ramka_mapa_przyciski, text="Klienci tej placówki")#, command=show_clients_of_selected_facility)
+button_map_clients_of_facility.grid(row=2, column=0, sticky=W, pady=5)
+
+button_map_employees_of_facility = Button(ramka_mapa_przyciski, text="Pracownicy tej placówki")#, command=show_employees_of_selected_facility)
+button_map_employees_of_facility.grid(row=3, column=0, sticky=W, pady=5)
 
 # ramka_mapa
 map_widget = tkintermapview.TkinterMapView(ramka_mapa, width=1200, height=450, corner_radius=0)
