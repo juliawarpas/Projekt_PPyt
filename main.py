@@ -30,11 +30,11 @@ class Facility:
             ]
 
 class Employee:
-    def __init__(self, name, surname, location, id_placowki, map_widget):
+    def __init__(self, name, surname, location, facility_name, map_widget):
         self.name = name
         self.surname = surname
         self.location = location
-        self.id_placowki = id_placowki
+        self.facility_name = facility_name
         self.cordinates = self.get_cordinates()
         self.marker = map_widget.set_marker(self.cordinates[0], self.cordinates[1], text=f'{self.name} {self.surname} {self.location}',marker_color_outside='blue')
 
@@ -51,11 +51,11 @@ class Employee:
             ]
 
 class Client:
-    def __init__(self, name, surname, location, id_placowki, map_widget):
+    def __init__(self, name, surname, location, facility_name, map_widget):
         self.name = name
         self.surname = surname
         self.location = location
-        self.id_placowki = id_placowki
+        self.facility_name = facility_name
         self.cordinates = self.get_cordinates()
         self.marker = map_widget.set_marker(self.cordinates[0], self.cordinates[1], text=f'{self.name} {self.surname} {self.location}',marker_color_outside='green')
 
@@ -86,10 +86,10 @@ def add_object():
             show_facilities()
 
             # aktualizacja menu z placówkami
-            placowka_id_var.set("")
-            menu_placowka_id['menu'].delete(0, 'end')
+            placowka_name_var.set("")
+            menu_placowka_name['menu'].delete(0, 'end')
             for f in facilities:
-                menu_placowka_id['menu'].add_command(label=f.id, command=lambda value=f.id: placowka_id_var.set(value))
+                menu_placowka_name['menu'].add_command(label=f.name, command=lambda value=f.id: placowka_name_var.set(value))
 
         elif typ == "Pracownik":
             surname = entry_nazwisko.get()
@@ -144,7 +144,7 @@ def update_facility(i):
     name = entry_imie.get()
     surname = entry_nazwisko.get()
     location = entry_miejscowosc.get()
-    id = entry_post.get()
+    faciliti_name = entry_post.get()
 
     facilities[i].name = name
     facilities[i].surname = surname
@@ -185,12 +185,12 @@ def edit_employee() -> None:
     name = employees[i].name
     surname = employees[i].surname
     location = employees[i].location
-    id_placowki = employees[i].id_placowki
+    facility_name = employees[i].facility_name
 
     entry_imie.insert(0, name)
     entry_nazwisko.insert(0, surname)
     entry_miejscowosc.insert(0, location)
-    entry_post.insert(0, id_placowki)
+    entry_post.insert(0, facility_name)
 
     button_dodaj_obiekt.configure(text='Zapisz', command=lambda: update_employee(i))
 
@@ -198,12 +198,12 @@ def update_employee(i):
     name = entry_imie.get()
     surname = entry_nazwisko.get()
     location = entry_miejscowosc.get()
-    id_placowki = entry_post.get()
+    facility_name = entry_post.get()
 
     employees[i].name = name
     employees[i].surname = surname
     employees[i].location = location
-    employees[i].id_placowki = id_placowki
+    employees[i].facility_name = facility_name
 
     employees[i].cordinates = employees[i].get_cordinates()
     employees[i].marker.delete()
@@ -238,12 +238,12 @@ def edit_clients() -> None:
     name = clients[i].name
     surname = clients[i].surname
     location = clients[i].location
-    id_placowki = clients[i].id_placowki
+    facility_name = clients[i].facility_name
 
     entry_imie.insert(0, name)
     entry_nazwisko.insert(0, surname)
     entry_miejscowosc.insert(0, location)
-    entry_post.insert(0, id_placowki)
+    entry_post.insert(0, facility_name)
 
     button_dodaj_obiekt.configure(text='Zapisz', command=lambda: update_client(i))
 
@@ -251,12 +251,12 @@ def update_client(i):
     name = entry_imie.get()
     surname = entry_nazwisko.get()
     location = entry_miejscowosc.get()
-    id_placowki = entry_post.get()
+    facility_name = entry_post.get()
 
     clients[i].name = name
     clients[i].surname = surname
     clients[i].location = location
-    clients[i].id_placowki = id_placowki
+    clients[i].facility_name = facility_name
 
     clients[i].cordinates = clients[i].get_cordinates()
     clients[i].marker.delete()
@@ -298,14 +298,14 @@ def on_typ_change(*args):
         entry_nazwisko.grid_remove()  # ukrywa pole wpisywania nazwiska
         Label_stanowisko.grid_remove()
         entry_post.grid_remove()
-        menu_placowka_id.grid_remove()
+        menu_placowka_name.grid_remove()
         Label_imie.config(text="Nazwa placówki:")
     else:
         Label_nazwisko.grid()         # pokazuje etykietę "Nazwisko"
         entry_nazwisko.grid()         # pokazuje pole wpisywania nazwiska
         Label_stanowisko.grid()
         entry_post.grid()
-        menu_placowka_id.grid()
+        menu_placowka_name.grid()
         Label_imie.config(text="Imię:")
 
 #GUI
@@ -336,10 +336,6 @@ listbox_lista_obiektow=Listbox(ramka_lista_placowek, width=50, height=10)
 listbox_lista_obiektow.grid(row=1, column=0, columnspan=3)
 
 
-button_pokaz_szczegoly=Button(ramka_lista_placowek, text='Pokaz szczegóły')
-button_pokaz_szczegoly.grid(row=2, column=0)
-
-
 button_usun_obiekt=Button(ramka_lista_placowek, text='Usuń', command=remove_facility)
 button_usun_obiekt.grid(row=2, column=1)
 
@@ -354,9 +350,6 @@ label_ramka_lista_pracownikow.grid(row=0, column=2)
 listbox_ramka_lista_pracownikow=Listbox(ramka_lista_pracownikow, width=50, height=10)
 listbox_ramka_lista_pracownikow.grid(row=1, column=2, columnspan=3)
 
-
-button_pokaz_szczegoly_pracownikow=Button(ramka_lista_pracownikow, text='Pokaz szczegóły')
-button_pokaz_szczegoly_pracownikow.grid(row=2, column=2)
 
 
 button_usun_pracownika=Button(ramka_lista_pracownikow, text='Usuń', command=remove_employee)
@@ -373,14 +366,8 @@ label_ramka_lista_klientow.grid(row=0, column=0)
 listbox_ramka_lista_klientow=Listbox(ramka_lista_klientow, width=50, height=10)
 listbox_ramka_lista_klientow.grid(row=1, column=0, columnspan=3)
 
-
-button_pokaz_szczegoly_klientow=Button(ramka_lista_klientow, text='Pokaz szczegóły')
-button_pokaz_szczegoly_klientow.grid(row=2, column=0)
-
-
 button_usun_klienta=Button(ramka_lista_klientow, text='Usuń', command=remove_client)
 button_usun_klienta.grid(row=2, column=1)
-
 
 button_edytuj_klienta=Button(ramka_lista_klientow, text='Edytuj', command=edit_clients)
 button_edytuj_klienta.grid(row=2, column=2)
@@ -416,11 +403,9 @@ button_dodaj_obiekt = Button(ramka_formularz, text="Dodaj", command=lambda: add_
 button_dodaj_obiekt.grid(row=5, column=0, columnspan=4, pady=10)
 
 Label(ramka_formularz, text="Placówka ID:").grid(row=4, column=2)
-placowka_id_var = StringVar()
-menu_placowka_id = OptionMenu(ramka_formularz, placowka_id_var, "")
-menu_placowka_id.grid(row=4, column=3)
-
-
+placowka_name_var = StringVar()
+menu_placowka_name = OptionMenu(ramka_formularz, placowka_name_var, "")
+menu_placowka_name.grid(row=4, column=3)
 
 #przyciski do map
 button_map_all_facilities = Button(ramka_mapa_przyciski, text="Mapa wszystkich placówek", command=show_all_facilities)
