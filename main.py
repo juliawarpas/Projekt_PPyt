@@ -74,7 +74,7 @@ class Client:
 def add_object():
     name = entry_imie.get()
     location = entry_miejscowosc.get()
-    post = entry_post.get()
+    facility_name = placowka_name_var.get()
     typ = typ_var.get()
 
 
@@ -89,21 +89,23 @@ def add_object():
             placowka_name_var.set("")
             menu_placowka_name['menu'].delete(0, 'end')
             for f in facilities:
-                menu_placowka_name['menu'].add_command(label=f.name, command=lambda value=f.id: placowka_name_var.set(value))
+                menu_placowka_name['menu'].add_command(label=f.name, command=lambda value=f.name: placowka_name_var.set(value))
 
         elif typ == "Pracownik":
             surname = entry_nazwisko.get()
-            obj = Employee(name, surname, location, post, map_widget)
+            obj = Employee(name, surname, location, facility_name, map_widget)
             employees.append(obj)
             show_employee()
         elif typ == "Klient":
             surname = entry_nazwisko.get()
-            obj = Client(name, surname, location, post, map_widget)
+            obj = Client(name, surname, location, facility_name, map_widget)
             clients.append(obj)
             show_clients()
+
     except Exception as e:
         print("Błąd dodawania:", e)
         return
+
 
     # Czyszczenie_formularz
     entry_imie.delete(0, END)
@@ -291,6 +293,7 @@ def show_all_employees():
             text=f'{emp.name} {emp.surname} ({emp.location})'
         )
 
+
 def on_typ_change(*args):
     typ = typ_var.get()
     if typ == "Placówka":
@@ -414,7 +417,7 @@ button_map_all_facilities.grid(row=0, column=0, sticky=W, pady=5)
 button_map_all_employees = Button(ramka_mapa_przyciski, text="Mapa wszystkich pracowników", command=show_all_employees)
 button_map_all_employees.grid(row=1, column=0, sticky=W, pady=5)
 
-button_map_clients_of_facility = Button(ramka_mapa_przyciski, text="Klienci tej placówki")#, command=show_clients_of_selected_facility)
+button_map_clients_of_facility = Button(ramka_mapa_przyciski, text="Klienci tej placówki",)# command=show_clients_of_selected_facility)
 button_map_clients_of_facility.grid(row=2, column=0, sticky=W, pady=5)
 
 button_map_employees_of_facility = Button(ramka_mapa_przyciski, text="Pracownicy tej placówki")#, command=show_employees_of_selected_facility)
