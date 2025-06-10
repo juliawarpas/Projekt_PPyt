@@ -299,7 +299,6 @@ def show_all_employees():
 def show_clients_of_selected_facility():
     i = listbox_lista_obiektow.index(ACTIVE)
     if i < 0 or i >= len(facilities):
-        print("Nie wybrano placówki.")
         return
 
     selected_facility = facilities[i]
@@ -313,6 +312,24 @@ def show_clients_of_selected_facility():
                 text=f'{client.name} {client.surname} ({client.location})',
                 marker_color_outside='green'
             )
+
+def show_employees_of_selected_facility():
+    i = listbox_lista_obiektow.index(ACTIVE)
+    if i < 0 or i >= len(facilities):
+        return
+
+    selected_facility = facilities[i]
+    map_widget.delete_all_marker()
+
+    for employee in employees:
+        if employee.facility_name == selected_facility.name:
+            employee.marker = map_widget.set_marker(
+                employee.cordinates[0],
+                employee.cordinates[1],
+                text=f'{employee.name} {employee.surname} ({employee.location})',
+                marker_color_outside='blue'
+            )
+
 
 def on_typ_change(*args):
     typ = typ_var.get()
@@ -425,7 +442,7 @@ typ_var.trace_add('write', on_typ_change)
 button_dodaj_obiekt = Button(ramka_formularz, text="Dodaj", command=lambda: add_object())
 button_dodaj_obiekt.grid(row=5, column=0, columnspan=4, pady=10)
 
-Label(ramka_formularz, text="Placówka ID:").grid(row=4, column=2)
+Label(ramka_formularz, text="Nazwa Placówki:").grid(row=4, column=2)
 placowka_name_var = StringVar()
 menu_placowka_name = OptionMenu(ramka_formularz, placowka_name_var, "")
 menu_placowka_name.grid(row=4, column=3)
@@ -440,7 +457,7 @@ button_map_all_employees.grid(row=1, column=0, sticky=W, pady=5)
 button_map_clients_of_facility = Button(ramka_mapa_przyciski, text="Klienci tej placówki", command=show_clients_of_selected_facility)
 button_map_clients_of_facility.grid(row=2, column=0, sticky=W, pady=5)
 
-button_map_employees_of_facility = Button(ramka_mapa_przyciski, text="Pracownicy tej placówki")#, command=show_employees_of_selected_facility)
+button_map_employees_of_facility = Button(ramka_mapa_przyciski, text="Pracownicy tej placówki", command=show_employees_of_selected_facility)
 button_map_employees_of_facility.grid(row=3, column=0, sticky=W, pady=5)
 
 # ramka_mapa
