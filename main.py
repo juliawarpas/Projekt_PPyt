@@ -9,13 +9,11 @@ employees = []
 clients = []
 
 class Facility:
-    def __init__(self, name, surname, location, id, map_widget):
+    def __init__(self, name, location, map_widget):
         self.name = name
-        self.surname = surname
         self.location = location
-        self.id = id
         self.cordinates = self.get_cordinates()
-        self.marker = map_widget.set_marker(self.cordinates[0], self.cordinates[1], text=f'{self.name} {self.surname} {self.location}',marker_color_outside='red')
+        self.marker = map_widget.set_marker(self.cordinates[0], self.cordinates[1], text=f'{self.name} {self.location}',marker_color_outside='red')
 
     def get_cordinates(self) -> list:
         from bs4 import BeautifulSoup
@@ -80,8 +78,7 @@ def add_object():
 
     try:
         if typ == "Placówka":
-            surname = ""
-            obj = Facility(name, surname, location, id, map_widget)
+            obj = Facility(name, location, map_widget)
             facilities.append(obj)
             show_facilities()
 
@@ -111,7 +108,7 @@ def add_object():
     entry_imie.delete(0, END)
     entry_nazwisko.delete(0, END)
     entry_miejscowosc.delete(0, END)
-    entry_post.delete(0, END)
+    placowka_name_var.set("")
     typ_var.set("Placówka")
 
 
@@ -119,7 +116,7 @@ def add_object():
 def show_facilities() -> None:
     listbox_lista_obiektow.delete(0, END)
     for idx,user in enumerate(facilities):
-        listbox_lista_obiektow.insert(idx, f'{idx+1}. {user.name} {user.surname}')
+        listbox_lista_obiektow.insert(idx, f'{idx+1}. {user.name}')
 
 def remove_facility() -> None:
     i=listbox_lista_obiektow.index(ACTIVE)
@@ -131,27 +128,21 @@ def remove_facility() -> None:
 def edit_facility():
     i = listbox_lista_obiektow.index(ACTIVE)
     name = facilities[i].name
-    surname = facilities[i].surname
     location = facilities[i].location
-    id = facilities[i].id
+
 
     entry_imie.insert(0, name)
-    entry_nazwisko.insert(0, surname)
     entry_miejscowosc.insert(0, location)
-    entry_post.insert(0, id)
+    placowka_name_var.set("")
 
     button_dodaj_obiekt.configure(text='Zapisz', command=lambda: update_facility(i))
 
 def update_facility(i):
     name = entry_imie.get()
-    surname = entry_nazwisko.get()
     location = entry_miejscowosc.get()
-    faciliti_name = entry_post.get()
 
     facilities[i].name = name
-    facilities[i].surname = surname
     facilities[i].location = location
-    facilities[i].id = id
 
     facilities[i].cordinates = facilities[i].get_cordinates()
     facilities[i].marker.delete()
@@ -162,9 +153,8 @@ def update_facility(i):
     button_dodaj_obiekt.config(text='Dodaj', command=add_object)
 
     entry_imie.delete(0, END)
-    entry_nazwisko.delete(0, END)
     entry_miejscowosc.delete(0, END)
-    entry_post.delete(0, END)
+    placowka_name_var.set("")
 
     entry_imie.focus()
 
@@ -192,7 +182,7 @@ def edit_employee() -> None:
     entry_imie.insert(0, name)
     entry_nazwisko.insert(0, surname)
     entry_miejscowosc.insert(0, location)
-    entry_post.insert(0, facility_name)
+    placowka_name_var.set(facility_name)
 
     button_dodaj_obiekt.configure(text='Zapisz', command=lambda: update_employee(i))
 
@@ -200,7 +190,7 @@ def update_employee(i):
     name = entry_imie.get()
     surname = entry_nazwisko.get()
     location = entry_miejscowosc.get()
-    facility_name = entry_post.get()
+    facility_name = placowka_name_var.get()
 
     employees[i].name = name
     employees[i].surname = surname
@@ -218,7 +208,7 @@ def update_employee(i):
     entry_imie.delete(0, END)
     entry_nazwisko.delete(0, END)
     entry_miejscowosc.delete(0, END)
-    entry_post.delete(0, END)
+    placowka_name_var.set(facility_name)
 
     entry_imie.focus()
 
@@ -245,7 +235,7 @@ def edit_clients() -> None:
     entry_imie.insert(0, name)
     entry_nazwisko.insert(0, surname)
     entry_miejscowosc.insert(0, location)
-    entry_post.insert(0, facility_name)
+    placowka_name_var.set(facility_name)
 
     button_dodaj_obiekt.configure(text='Zapisz', command=lambda: update_client(i))
 
@@ -253,7 +243,7 @@ def update_client(i):
     name = entry_imie.get()
     surname = entry_nazwisko.get()
     location = entry_miejscowosc.get()
-    facility_name = entry_post.get()
+    facility_name = placowka_name_var.get()
 
     clients[i].name = name
     clients[i].surname = surname
@@ -271,7 +261,7 @@ def update_client(i):
     entry_imie.delete(0, END)
     entry_nazwisko.delete(0, END)
     entry_miejscowosc.delete(0, END)
-    entry_post.delete(0, END)
+    placowka_name_var.set("")
 
     entry_imie.focus()
 
@@ -334,21 +324,19 @@ def show_employees_of_selected_facility():
 def on_typ_change(*args):
     typ = typ_var.get()
     if typ == "Placówka":
-        Label_nazwisko.grid_remove()  # ukrywa etykietę "Nazwisko"
-        entry_nazwisko.grid_remove()  # ukrywa pole wpisywania nazwiska
-        Label_stanowisko.grid_remove()
-        entry_post.grid_remove()
+        Label_nazwisko.grid_remove()
+        entry_nazwisko.grid_remove()
         menu_placowka_name.grid_remove()
+        Label_placowka_name.grid_remove()
         Label_imie.config(text="Nazwa placówki:")
     else:
-        Label_nazwisko.grid()         # pokazuje etykietę "Nazwisko"
-        entry_nazwisko.grid()         # pokazuje pole wpisywania nazwiska
-        Label_stanowisko.grid()
-        entry_post.grid()
+        Label_nazwisko.grid()
+        entry_nazwisko.grid()
         menu_placowka_name.grid()
+        Label_placowka_name.grid()
         Label_imie.config(text="Imię:")
 
-#GUI
+#GUI --------------------------------------------------------------------------
 root = Tk()
 root.geometry("1200x700")
 root.title('mapbook_jw')
@@ -390,11 +378,8 @@ label_ramka_lista_pracownikow.grid(row=0, column=2)
 listbox_ramka_lista_pracownikow=Listbox(ramka_lista_pracownikow, width=50, height=10)
 listbox_ramka_lista_pracownikow.grid(row=1, column=2, columnspan=3)
 
-
-
 button_usun_pracownika=Button(ramka_lista_pracownikow, text='Usuń', command=remove_employee)
 button_usun_pracownika.grid(row=2, column=3)
-
 
 button_edytuj_pracownika=Button(ramka_lista_pracownikow, text='Edytuj', command=edit_employee)
 button_edytuj_pracownika.grid(row=2, column=4)
@@ -427,10 +412,6 @@ Label(ramka_formularz, text="Miejscowość:").grid(row=0, column=2)
 entry_miejscowosc = Entry(ramka_formularz)
 entry_miejscowosc.grid(row=0, column=3)
 
-Label_stanowisko = Label(ramka_formularz, text="Stanowisko/Rola:")
-Label_stanowisko.grid(row=1, column=2)
-entry_post = Entry(ramka_formularz)
-entry_post.grid(row=1, column=3)
 
 Label(ramka_formularz, text="Typ obiektu:").grid(row=4, column=0)
 typy = ["Placówka", "Pracownik", "Klient"]
@@ -442,7 +423,8 @@ typ_var.trace_add('write', on_typ_change)
 button_dodaj_obiekt = Button(ramka_formularz, text="Dodaj", command=lambda: add_object())
 button_dodaj_obiekt.grid(row=5, column=0, columnspan=4, pady=10)
 
-Label(ramka_formularz, text="Nazwa Placówki:").grid(row=4, column=2)
+Label_placowka_name = Label(ramka_formularz, text="Nazwa Placówki:")
+Label_placowka_name.grid(row=4, column=2)
 placowka_name_var = StringVar()
 menu_placowka_name = OptionMenu(ramka_formularz, placowka_name_var, "")
 menu_placowka_name.grid(row=4, column=3)
